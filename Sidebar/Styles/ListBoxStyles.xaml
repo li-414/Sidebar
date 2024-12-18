@@ -1,0 +1,287 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:converter="clr-namespace:Sidebar.Helpers">
+
+    <!--  如果转换器未在全局定义，可在此直接定义  -->
+    <converter:BitmapToBitmapImageConverter x:Key="BitmapToBitmapImageConverter" />
+    <converter:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <converter:NumberToHorizontalAlignmentConverter x:Key="NumberToHorizontalAlignmentConverter" />
+    <converter:ImageSourceToBorderThicknessConverter x:Key="ImageSourceToBorderThicknessConverter" />
+
+
+    <DataTemplate x:Key="ProcessItemTemplate">
+        <Grid Width="224" Background="Transparent">
+            <StackPanel x:Name="imageArea">
+                <Grid>
+                    <Border
+                        Width="{Binding ElementName=appImage, Path=Width}"
+                        Height="{Binding ElementName=appImage, Path=Height}"
+                        HorizontalAlignment="Stretch"
+                        Background="White"
+                        BorderBrush="{Binding DataContext.ForegroundBrush, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                        BorderThickness="1"
+                        Opacity="0.1"
+                        Visibility="{Binding DataContext.IsDrawBitmap, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+                    <Image
+                        x:Name="appImage"
+                        Height="126"
+                        HorizontalAlignment="{Binding DataContext.BitmapPosite, Converter={StaticResource NumberToHorizontalAlignmentConverter}, RelativeSource={RelativeSource Mode=Self}}"
+                        Source="{Binding DataContext.Bitmap, Converter={StaticResource BitmapToBitmapImageConverter}, RelativeSource={RelativeSource Mode=Self}}"
+                        Visibility="{Binding DataContext.IsDrawBitmap, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+
+
+
+                </Grid>
+
+
+                <!--  显示进程标题  -->
+                <TextBlock
+                    Margin="0,5,0,10"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Bottom"
+                    Background="{Binding DataContext.SidebarBackground, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    Foreground="{Binding DataContext.ForegroundBrush, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    Text="{Binding DataContext.Title, RelativeSource={RelativeSource Mode=Self}}"
+                    TextAlignment="Left" />
+            </StackPanel>
+
+            <StackPanel
+                x:Name="OperationArea"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Orientation="Horizontal"
+                Visibility="Collapsed">
+                <StackPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Cursor" Value="Hand" />
+                        <Setter Property="Width" Value="20" />
+                        <Setter Property="Height" Value="20" />
+                        <Setter Property="Margin" Value="1,0,0,1" />
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        <Setter Property="FontSize" Value="8" />
+                    </Style>
+                </StackPanel.Resources>
+
+
+                <Button
+                    VerticalContentAlignment="Center"
+                    Command="{Binding DataContext.NormalWindowCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    CommandParameter="{Binding Handle}"
+                    Content="▣"
+                    ToolTip="正常显示" />
+                <Button
+                    VerticalContentAlignment="Center"
+                    Command="{Binding DataContext.MaxWindowCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    CommandParameter="{Binding Handle}"
+                    Content="⿺"
+                    ToolTip="最大显示" />
+
+                <Button
+                    VerticalContentAlignment="Center"
+                    Command="{Binding DataContext.SecondScreenCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    CommandParameter="{Binding Handle}"
+                    Content="⿰"
+                    ToolTip="副屏" />
+                <Button
+                    VerticalContentAlignment="Center"
+                    Command="{Binding DataContext.SecondScreenLeftCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    CommandParameter="{Binding Handle}"
+                    Content="口﹣"
+                    ToolTip="副屏左" />
+                <Button
+                    VerticalContentAlignment="Center"
+                    Command="{Binding DataContext.SecondScreenRightCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    CommandParameter="{Binding Handle}"
+                    Content="﹣口"
+                    ToolTip="副屏右" />
+
+                <!--  最小化按钮，默认隐藏  -->
+                <Button
+                    VerticalContentAlignment="Center"
+                    Command="{Binding DataContext.HiddenWindowCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    CommandParameter="{Binding Handle}"
+                    Content="➖"
+                    ToolTip="隐藏" />
+                <Button
+                    VerticalContentAlignment="Center"
+                    Command="{Binding DataContext.CloseWindowCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    CommandParameter="{Binding Handle}"
+                    Content="❌"
+                    ToolTip="关闭进程" />
+
+            </StackPanel>
+
+            <Popup
+                x:Name="imagePop"
+                HorizontalOffset="8"
+                IsOpen="False"
+                Placement="Left"
+                PlacementTarget="{Binding ElementName=imageArea}">
+                <Grid>
+                    <Image
+                        Height="378"
+                        HorizontalAlignment="{Binding DataContext.BitmapPosite, Converter={StaticResource NumberToHorizontalAlignmentConverter}, RelativeSource={RelativeSource Mode=Self}}"
+                        Source="{Binding DataContext.Bitmap, Converter={StaticResource BitmapToBitmapImageConverter}, RelativeSource={RelativeSource Mode=Self}}" />
+                </Grid>
+            </Popup>
+
+
+            <!--  鼠标悬停时显示关闭按钮的触发器  -->
+            <Grid.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OperationArea" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                    <DiscreteObjectKeyFrame.Value>
+                                        <Visibility>Visible</Visibility>
+                                    </DiscreteObjectKeyFrame.Value>
+                                </DiscreteObjectKeyFrame>
+                            </ObjectAnimationUsingKeyFrames>
+                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="imagePop" Storyboard.TargetProperty="IsOpen">
+                                <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="True" />
+                            </BooleanAnimationUsingKeyFrames>
+                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="imagePop" Storyboard.TargetProperty="IsOpen">
+                                <DiscreteBooleanKeyFrame KeyTime="0:0:1.5" Value="False" />
+                            </BooleanAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OperationArea" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                    <DiscreteObjectKeyFrame.Value>
+                                        <Visibility>Collapsed</Visibility>
+                                    </DiscreteObjectKeyFrame.Value>
+                                </DiscreteObjectKeyFrame>
+                            </ObjectAnimationUsingKeyFrames>
+                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="imagePop" Storyboard.TargetProperty="IsOpen">
+                                <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="False" />
+                            </BooleanAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Grid.Triggers>
+        </Grid>
+    </DataTemplate>
+
+
+
+    <SolidColorBrush x:Key="ListBox.Static.Background" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ListBox.Static.Border" Color="#FFABADB3" />
+    <SolidColorBrush x:Key="ListBox.Disabled.Background" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ListBox.Disabled.Border" Color="#FFD9D9D9" />
+
+    <Style x:Key="ListBoxStyle1" TargetType="{x:Type ListBox}">
+        <Setter Property="Background" Value="{StaticResource ListBox.Static.Background}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ListBox.Static.Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
+        <Setter Property="ScrollViewer.PanningMode" Value="Both" />
+        <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBox}">
+                    <Border
+                        x:Name="Bd"
+                        Padding="1"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="true">
+                        <ScrollViewer
+                            Padding="{TemplateBinding Padding}"
+                            Focusable="false"
+                            Style="{DynamicResource ScrollViewerStyle1}">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </ScrollViewer>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource ListBox.Disabled.Background}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource ListBox.Disabled.Border}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsGrouping" Value="true" />
+                                <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ScrollViewerStyle1" TargetType="{x:Type ScrollViewer}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                    <Grid x:Name="Grid" Background="{TemplateBinding Background}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Rectangle
+                            x:Name="Corner"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                        <ScrollContentPresenter
+                            x:Name="PART_ScrollContentPresenter"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="{TemplateBinding Padding}"
+                            CanContentScroll="{TemplateBinding CanContentScroll}"
+                            CanHorizontallyScroll="False"
+                            CanVerticallyScroll="False"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}" />
+                        <ScrollBar
+                            x:Name="PART_VerticalScrollBar"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            AutomationProperties.AutomationId="VerticalScrollBar"
+                            Cursor="Arrow"
+                            Maximum="{TemplateBinding ScrollableHeight}"
+                            Minimum="0"
+                            ViewportSize="{TemplateBinding ViewportHeight}"
+                            Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                            Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                        <ScrollBar
+                            x:Name="PART_HorizontalScrollBar"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            AutomationProperties.AutomationId="HorizontalScrollBar"
+                            Cursor="Arrow"
+                            Maximum="{TemplateBinding ScrollableWidth}"
+                            Minimum="0"
+                            Orientation="Horizontal"
+                            ViewportSize="{TemplateBinding ViewportWidth}"
+                            Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                            Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>

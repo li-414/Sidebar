@@ -1,0 +1,66 @@
+﻿<Page
+    x:Class="Sidebar.Views.ProcessPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Sidebar.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:Sidebar.ViewModels"
+    Title="ProcessPage"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <viewmodels:ProcessPageViewModel />
+    </Page.DataContext>
+
+    <Grid>
+        <StackPanel>
+            <StackPanel Margin="10,0,0,0">
+                <StackPanel
+                    Height="21"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Visibility="{Binding HideDrawBitmap}">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Background="{Binding SidebarBackground}"
+                        Foreground="{Binding ForegroundBrush}"
+                        Text="进程检测" />
+                    <StackPanel
+                        Margin="10,0,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Background="{Binding SidebarBackground}"
+                        Orientation="Horizontal">
+                        <TextBlock Foreground="{Binding ForegroundBrush}" Text="预览图" />
+                        <CheckBox IsChecked="{Binding IsDrawBitmap}" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+
+            <ListBox
+                Height="1000"
+                Margin="5,5,0,5"
+                d:ItemsSource="{d:SampleData ItemCount=5}"
+                Background="Transparent"
+                BorderThickness="0"
+                ItemTemplate="{DynamicResource ProcessItemTemplate}"
+                ItemsSource="{Binding OpenWindows}"
+                MouseEnter="ListBox_MouseEnter"
+                MouseLeave="ListBox_MouseLeave"
+                PreviewMouseDoubleClick="ListBox_MouseDoubleClick"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                Style="{DynamicResource ListBoxStyle1}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="SelectionChanged">
+                        <b:InvokeCommandAction Command="{Binding ProcessSelectionChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=SelectedItem}" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </ListBox>
+        </StackPanel>
+    </Grid>
+</Page>

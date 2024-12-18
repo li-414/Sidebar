@@ -1,0 +1,33 @@
+﻿<Page
+    x:Class="Sidebar.Views.DesktopPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Sidebar.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:Sidebar.ViewModels"
+    Title="DesktopPage"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <viewmodels:DesktopPageViewModel />
+    </Page.DataContext>
+
+    <Grid>
+        <StackPanel Grid.Row="1" VerticalAlignment="Top">
+            <TextBlock Foreground="{Binding ForegroundBrush}" Text="桌面图标" />
+
+            <ListBox
+                MaxHeight="980"
+                Margin="5"
+                Background="Transparent"
+                DisplayMemberPath="Title"
+                Foreground="{Binding ForegroundBrush}"
+                ItemsSource="{Binding DesktopLinks}"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                SelectionChanged="ListBox_DsekTopSelectionChanged"
+                Style="{DynamicResource ListBoxStyle1}" />
+        </StackPanel>
+
+    </Grid>
+</Page>

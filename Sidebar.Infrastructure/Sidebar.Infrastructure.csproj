@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <BaseOutputPath>..\Plugins</BaseOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sidebar.Application\Sidebar.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Interop.IWshRuntimeLibrary">
+      <HintPath>DLL\Interop.IWshRuntimeLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.Shell32">
+      <HintPath>DLL\Interop.Shell32.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

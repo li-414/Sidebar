@@ -1,0 +1,168 @@
+﻿<Window
+    x:Class="Sidebar.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:converter="clr-namespace:Sidebar.Helpers"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Sidebar"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:Sidebar.ViewModels"
+    xmlns:views="clr-namespace:Sidebar.Views"
+    xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+    Title="Sidebar"
+    Width="800"
+    Height="450"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowStyle="None"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <converter:ConverterHelper x:Key="ScaleConverter" />
+        <converter:BorderPositionConverter x:Key="borderPositionConverter" />
+
+
+    </Window.Resources>
+
+    <Window.DataContext>
+        <viewmodels:MainWindowViewModel />
+    </Window.DataContext>
+
+    <!--  Background="{Binding SidebarBackground}"  -->
+
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <!--  侧边栏  -->
+        <Grid
+            MaxWidth="250"
+            HorizontalAlignment="Left"
+            Background="Transparent"
+            DockPanel.Dock="Left">
+            <Frame
+                Name="framemain"
+                NavigationUIVisibility="Hidden"
+                Source="{Binding NavigationUrl}" />
+
+
+        </Grid>
+
+        <StackPanel
+            Grid.Column="1"
+            Margin="0,30,0,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="Transparent"
+            Orientation="Vertical">
+            <Border
+                x:Name="DesktopBtn"
+                Background="{Binding SidebarBackground}"
+                BorderBrush="{Binding ForegroundBrush}"
+                BorderThickness="1,1,1,1"
+                Cursor="Hand">
+                <TextBlock
+                    Width="14"
+                    Margin="2,5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{Binding ForegroundBrush}"
+                    MouseLeftButtonUp="DesktopBtn_MouseLeftButtonDown">
+                    <Run Text="桌" />
+                    <LineBreak />
+                    <Run Text="面" />
+                </TextBlock>
+            </Border>
+
+            <Popup
+                x:Name="DesktopPop"
+                AllowsTransparency="True"
+                HorizontalOffset="5"
+                Placement="Left"
+                PlacementTarget="{Binding ElementName=DesktopBtn}"
+                StaysOpen="False">
+                <Frame
+                    x:Name="desktopFrame"
+                    Background="{Binding SidebarBackground}"
+                    Focusable="True"
+                    IsTabStop="True"
+                    NavigationUIVisibility="Hidden"
+                    Source="pack://application:,,,/Sidebar;component/Views/DesktopPage.xaml" />
+            </Popup>
+        </StackPanel>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel
+                Margin="4,0"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Height" Value="20" />
+                        <Setter Property="Width" Value="70" />
+                        <Setter Property="Margin" Value="5" />
+                        <Setter Property="Opacity" Value="0.5" />
+                        <Setter Property="Cursor" Value="Hand" />
+                    </Style>
+                </StackPanel.Resources>
+                <Button
+                    Command="{Binding NavigationAddressCommand}"
+                    CommandParameter="1"
+                    Content="桌面" />
+                <Button
+                    Command="{Binding NavigationAddressCommand}"
+                    CommandParameter="2"
+                    Content="生活" />
+                <Button
+                    Command="{Binding NavigationAddressCommand}"
+                    CommandParameter="3"
+                    Content="工具" />
+            </StackPanel>
+
+            <Grid Grid.Row="1" Margin="10,0,0,0">
+                <Grid Background="White" Visibility="{Binding WebVisibility}">
+                    <wpf:WebView2 Source="{Binding NavigationSoure}" />
+                </Grid>
+
+                <Grid Margin="0,1,0,0">
+                    <Border x:Name="EmbedArea">
+                        <b:Interaction.Behaviors>
+                            <converter:BindPositionBehavior BindPosition="{Binding UpdateEmbedAreaPositionAction}" />
+                        </b:Interaction.Behaviors>
+                    </Border>
+
+                    <!--  新的 Border  -->
+                    <Border
+                        x:Name="EmbedAreaNormal"
+                        Width="{Binding ActualWidth, ElementName=EmbedArea, Converter={StaticResource ScaleConverter}, ConverterParameter=0.67}"
+                        Height="{Binding ActualHeight, ElementName=EmbedArea, Converter={StaticResource ScaleConverter}, ConverterParameter=0.67}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                        <b:Interaction.Behaviors>
+                            <converter:BindPositionBehavior BindPosition="{Binding UpdateEmbedAreaNormalPositionAction}" />
+                        </b:Interaction.Behaviors>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+
+
+    </Grid>
+
+
+
+</Window>

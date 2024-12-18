@@ -1,0 +1,19 @@
+﻿<UserControl
+    x:Class="Sidebar.Views.AddressControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Sidebar.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Background="Transparent">
+        <wpf:WebView2
+            MinWidth="1366"
+            MinHeight="540"
+            Initialized="WebView2_Initialized"
+            Source="http://101.43.204.170:8083/Address" />
+    </Grid>
+</UserControl>
